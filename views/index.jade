@@ -1,0 +1,17 @@
+extends layout
+
+block content
+     section#todo
+      header#header
+       h1 todos
+       form( id='todo-form')
+        input(id='new-todo', placeholder="What needs to be done?", name='title')
+      section#main
+       input(id="toggle-all", type="checkbox")
+       ul#todo-list
+      footer#footer
+     div#info
+      p Double-click to edit a todo
+      p Written by <a href="https://twitter.com/ishuah_" target="blank_">Ishuah Kariuki</a> based on TodoMVC by <a href="https://github.com/addyosmani" target="blank_">Addy Osmani</a>
+      p Node.js | Express.js | Mongoose.js | MongoDb
+      p The write-up, coming soon
