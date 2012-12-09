@@ -50,7 +50,7 @@ jQuery(function($){
 				app.persist(new_todo);
 
 				return false;
-			});
+			}); 
 
 			$('button.destroy').live('click', function(e){
 				e.preventDefault();
