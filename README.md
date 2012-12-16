@@ -1,4 +1,4 @@
-## TodoMVC built with Node.js (Express.js Framework) + MongoDb.
+## TodoMVC built with Node.js (Express.js Framework) + MongoDb + socket.io
 
 Simple Todo Application based on <a href="https://github.com/addyosmani/todomvc">https://github.com/addyosmani/todomvc</a>
 
