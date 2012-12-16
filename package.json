@@ -8,7 +8,8 @@
   "dependencies": {
     "express": "3.0.0rc4",
     "jade": "*",
-    "mongoose": "*" 
+    "mongoose": "*",
+    "socket.io": "*"
 
   }
 }

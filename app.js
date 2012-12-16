@@ -9,6 +9,7 @@ var express = require('express')
   , http = require('http')
   , path = require('path')
   , mongoose = require('mongoose')
+  , io = require('socket.io')
   , db = mongoose.connect('mongodb://localhost/todos')
   , Schema = mongoose.Schema
   , ObjectID = Schema.ObjectId
@@ -33,104 +34,121 @@ app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
-app.get('/', routes.index);
-/*post handler, add todo 
-Response: Todo object, json format
-*/
-app.post('/todo/add', function(req, res){
-    res.contentType('application/json');
+var server = http.createServer(app).listen(app.get('port'), function(){
+  console.log("Express server listening on port " + app.get('port'));
+});
 
-    var todo = new Todo({
-      title: req.body.title,
+
+var sio = io.listen(server);
+//User online user count variable
+var users = 0;
+
+//Configure the socket.io connection settings.
+        //See http://socket.io/
+sio.configure(function (){
+  sio.set('log level', 0);
+  sio.set('authorization', function (handshakeData, callback) {
+   callback(null, true); // error first callback style
+  });
+});
+
+sio.sockets.on('connection', function (socket) {
+  users++;
+  socket.emit('count', { count: users });
+  socket.broadcast.emit('count', { count: users });
+
+  /*handles 'all' namespace
+  function: list all todos
+  response: all todos, json format
+  */
+  Todo.find({}, function(err, todos){
+   socket.emit('all',todos);
+  });
+
+  /*handles 'add' namespace
+  function: add a todo 
+  Response: Todo object
+  */
+  socket.on('add', function(data){
+     var todo = new Todo({
+      title: data.title,
       complete: false
     });
 
     todo.save(function(err){
       if(err) throw err;
-      //console.log('Saved.');
-      res.send(todo);
-    });
-});
-
-/* get handler, serve all todos
-Response: Todo objects, json format
-*/
-app.get('/todo/all', function(req, res){
-  res.contentType('application/json');
-
-  Todo.find({}, function(err, todos){
-    res.send(todos);
-  });
-});
-
-/*
- post handler, edit todo
- Response: { success: boolean }
-*/ 
-app.post('/todo/edit', function(req, res){
-  res.contentType('application/json');
-
-  Todo.findById(req.body.id, function(err, todo){
-    todo.title = req.body.title;
-    todo.save(function(err){
-      if(err) throw err;
-      res.send({ success: true });
+      socket.emit('added', todo );
+      socket.broadcast.emit('added', todo);
     });
   });
-});
-
-/*
-post handler, delete one todo
-Response: { success: boolean }
+/*Handles 'delete' namespace
+function: delete a todo
+response: the delete todo id, json object
 */
-
-app.post('/todo/delete', function(req, res){
-  res.contentType('application/json');
-
-  Todo.findById(req.body.id, function(err, todo){
-    todo.remove(function(err){
-      if(err) throw err;
-      res.send({ success: true });
-    });
-  });
-});
-
-/*
-post handler, change todo status
-response: { success: boolean }
-*/
-
-app.post('/todo/changestatus', function(req, res){
-  res.contentType('application/json');
-
-  Todo.findById(req.body.id, function(err, todo){
-    todo.complete = req.body.status == 'complete' ? true : false;
-    todo.save(function(err){
-      if(err) throw err;
-      res.send({ success: true });
-    });
-  });
-});
-
-/*
-post handler, change status for all todos
-response { success: boolean }
-*/
-
-app.post('/todo/all/changestatus', function(req, res){
-  res.contentType('application/json');
-  var master_status = req.body.status == 'complete' ? true : false;
-  Todo.find({}, function(err, todos){
-    for(var i = 0; i < todos.length; i++){
-      todos[i].complete = master_status;
-      todos[i].save(function(err){
+  socket.on('delete', function(data){
+     Todo.findById(data.id, function(err, todo){
+      todo.remove(function(err){
         if(err) throw err;
+        socket.emit('deleted', data );
+        socket.broadcast.emit('deleted', data);
       });
-    }
+    });
   });
-  res.send({success: true});
+
+/*Handles 'edit' namespace
+function: edit a todo
+response: edited todo, json object
+*/
+  socket.on('edit', function(data){
+     Todo.findById(data.id, function(err, todo){
+        todo.title = data.title;
+        todo.save(function(err){
+          if(err) throw err;
+          socket.emit('edited', todo);
+          socket.broadcast.emit('edited', todo);
+        });
+      });
+  });
+
+/*Handles 'changestatus' namespace
+function: change the status of a todo
+response: the todo that was edited, json object
+*/
+  socket.on('changestatus', function(data){
+     Todo.findById(data.id, function(err, todo){
+    todo.complete = data.status == 'complete' ? true : false;
+    todo.save(function(err){
+      if(err) throw err;
+      socket.emit('statuschanged', data );
+      socket.broadcast.emit('statuschanged', data);
+    });
+  });
+  });
+/*Handles 'allchangestatus' namespace
+function: change the status of all todos
+response: the status, json object
+*/
+  socket.on('allchangestatus', function(data){
+      var master_status = data.status == 'complete' ? true : false;
+      Todo.find({}, function(err, todos){
+        for(var i = 0; i < todos.length; i++){
+          todos[i].complete = master_status;
+          todos[i].save(function(err){
+            if(err) throw err;
+            socket.emit('allstatuschanged', data);
+            socket.broadcast.emit('allstatuschanged', data);
+          });
+        }
+      });
+  });
+
+//disconnect state
+  socket.on('disconnect', function(){
+    users--;
+    socket.emit('count', { count: users });
+    socket.broadcast.emit('count', { count: users });
+  });
 });
 
-http.createServer(app).listen(app.get('port'), function(){
-  console.log("Express server listening on port " + app.get('port'));
-});
+//Our index page
+app.get('/', routes.index);

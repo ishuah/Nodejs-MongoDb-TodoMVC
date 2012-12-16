@@ -101,6 +101,15 @@ z-index: 2;
 box-shadow: none;
 }
 
+#todo input::-webkit-input-placeholder {
+	font-style: italic;
+}
+
+#todo input:-moz-placeholder {
+    color: rgb(169, 169, 169);
+    font-style: italic;
+}
+
 ul#todo-list li .edit {
 display: none;
 }
