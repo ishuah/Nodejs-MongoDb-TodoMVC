@@ -3,7 +3,13 @@ html
   head
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
+    
+
+  body
+    block content
     script(src='/javascripts/jquery-1.8.3.min.js')
+    script(src='/javascripts/backbone/lib/underscore-min.js')
+    script(src='/javascripts/backbone/lib/backbone-min.js')
     script(src="/socket.io/socket.io.js")
     script(src='/javascripts/do.js')
     script(type='text/javascript')
@@ -17,6 +23,3 @@ html
        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
      })();
-
-  body
-    block content
