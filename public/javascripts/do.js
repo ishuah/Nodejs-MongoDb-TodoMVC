@@ -1,7 +1,3 @@
-
-jQuery(function($){
-	"use strict";
-
 	//client side socket.io
 	//var socket = io.connect('http://ishuah.com:8080');
 	var socket = io.connect();
@@ -53,12 +49,13 @@ jQuery(function($){
 				return false;
 			}); 
 
-			$('button.destroy').live('click', function(e){
+			$('button.destroy').click(function(e){
 				e.preventDefault();
 				app.destroy($(this).attr('data-todoId'));
 			});
 
-			$('input.toggle').live('click', function(){
+			$('input.toggle').click(function(){
+				console.log("toggle");
 				if($(this).prop('checked')){
 					app.changeStatus($(this).attr('data-todoId'), 'complete');
 				}else{
@@ -67,7 +64,7 @@ jQuery(function($){
 				
 			});
 
-			$('input#toggle-all').live('click', function(){
+			$('input#toggle-all').click(function(){
 				if ($(this).prop('checked')) {
 					app.allChangeStatus('complete');
 				}else{
@@ -75,12 +72,12 @@ jQuery(function($){
 				}
 			});
 
-			$('ul#todo-list li').live('dblclick', function(){
+			$('ul#todo-list li').dblclick( function(){
 				$(this).addClass('editing');
 				$(this).children('input.edit').focus();
 			});
 
-			$('input.edit').live('focusout',function(){
+			$('input.edit').focusout(function(){
 
 				if(!$(this).val()){
 					app.destroy($(this).attr('data-todoId'));
@@ -98,7 +95,7 @@ jQuery(function($){
 				
 			});
 
-			$('input.edit').live('keypress', function(e){
+			$('input.edit').keypress(function(e){
 				 if(e.which == 13) {
 				 	if(!$(this).val()){
 						app.destroy($(this).attr('data-todoId'));
@@ -204,9 +201,5 @@ jQuery(function($){
 			}
 		}
 	};
-
-	window.App = app.init();
-});
-
 
  

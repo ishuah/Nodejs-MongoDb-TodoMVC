@@ -10,6 +10,5 @@
     "jade": "*",
     "mongoose": "*",
     "socket.io": "*"
-
   }
 }
