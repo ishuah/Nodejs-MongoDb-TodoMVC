@@ -19,7 +19,7 @@ var express = require('express')
 
 var app = express();
 
-console.log("mongolab uri: "process.env.MONGOLAB_URI);
+console.log("mongolab uri: "+process.env.MONGOLAB_URI);
 
 app.configure(function(){
   app.set('port', process.env.PORT || 8080);
