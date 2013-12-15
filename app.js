@@ -64,6 +64,8 @@ sio.sockets.on('connection', function (socket) {
   Todo.find({}, function(err, todos){
    socket.emit('all',todos);
   });
+  
+  
 
   /*handles 'add' namespace
   function: add a todo 

@@ -3,7 +3,8 @@ html
   head
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
-    
+    script
+      var TODO = {};
 
   body
     block content
@@ -11,10 +12,13 @@ html
     script(src='/javascripts/backbone/lib/underscore-min.js')
     script(src='/javascripts/backbone/lib/backbone-min.js')
     script(src="/socket.io/socket.io.js")
-    script(src='/javascripts/do.js')
-    script(type="text/javascript")
-     $(document).ready(function(){
-      app.init();
+    script(src="/javascripts/backbone/models/model.js")
+    script
+      var socket = io.connect();
+      socket.on('all', function(data){
+        for(var i = 0; i< data.length; i++){
+          TODO.Task.create(data[i].title, data[i]._id, data[i].complete);
+        }
       });
     script(type='text/javascript')
      var _gaq = _gaq || [];
