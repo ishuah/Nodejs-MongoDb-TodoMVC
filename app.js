@@ -10,7 +10,7 @@ var express = require('express')
   , path = require('path')
   , mongoose = require('mongoose')
   , io = require('socket.io')
-  , mongoURI =  process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/todos'
+  , mongoURI =  process.env.MONGOLAB_URI || 'mongodb://localhost/todos'
   , db = mongoose.connect(mongoURI)
   , Schema = mongoose.Schema
   , ObjectID = Schema.ObjectId
@@ -18,8 +18,6 @@ var express = require('express')
 
 
 var app = express();
-
-console.log("mongolab uri: "+process.env.MONGOLAB_URI);
 
 app.configure(function(){
   app.set('port', process.env.PORT || 8080);
