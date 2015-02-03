@@ -44,15 +44,6 @@ var sio = io.listen(server);
 //User online user count variable
 var users = 0;
 
-//Configure the socket.io connection settings.
-        //See http://socket.io/
-sio.configure(function (){
-  sio.set('log level', 0);
-  sio.set('authorization', function (handshakeData, callback) {
-   callback(null, true); // error first callback style
-  });
-});
-
 sio.sockets.on('connection', function (socket) {
   users++;
   socket.emit('count', { count: users });
