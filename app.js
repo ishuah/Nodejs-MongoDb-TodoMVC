@@ -44,8 +44,24 @@ var sio = io.listen(server);
 //User online user count variable
 var users = 0;
 
+var address_list = new Array();
+
 sio.sockets.on('connection', function (socket) {
-  users++;
+  var address = socket.handshake.address;
+	
+  if(address_list[address]){
+	var socketid = address_list[address].list;
+	socketid.push(socket.id);
+    address_list[address].list = socketid;
+  }else{
+	var socketid = new Array();
+	socketid.push(socket.id);
+	address_list[address] = new Array();
+	address_list[address].list = socketid;
+  }
+
+  users = Object.keys(address_list).length;
+
   socket.emit('count', { count: users });
   socket.broadcast.emit('count', { count: users });
 
@@ -136,7 +152,12 @@ response: the status, json object
 
 //disconnect state
   socket.on('disconnect', function(){
-    users--;
+	var socketid = address_list[address].list;
+	delete socketid[socketid.indexOf(socket.id)];
+	if(Object.keys(socketid).length == 0){
+	  delete address_list[address];
+	}
+    users = Object.keys(address_list).length;
     socket.emit('count', { count: users });
     socket.broadcast.emit('count', { count: users });
   });
