@@ -1,11 +1,11 @@
 // The model!
-function init(Schema, mongoose){
-	var TheSchema = new Schema({
-		title: String,
-		complete: Boolean
-	});
+function init(Schema, mongoose) {
+  var TheSchema = new Schema({
+    title: String,
+    complete: Boolean
+  });
 
-	return mongoose.model('Todos', TheSchema);
+  return mongoose.model('Todos', TheSchema);
 }
 
 module.exports.init = init;
