@@ -11,6 +11,3 @@ Simple Todo Application based on <a href="https://github.com/addyosmani/todomvc"
 ### Additional features
 1. Realtime support! Add, edit, delete and changing status all supported.
 
-### More to do
-1. Add user accounts, personalize todo lists
-2. Make the list sortable
