@@ -2,6 +2,9 @@
 
 Simple Todo Application based on <a href="https://github.com/addyosmani/todomvc">https://github.com/addyosmani/todomvc</a>
 
+I've deprecated this project because a lot of dependencies are outdated.
+Thank you to everyone who contributed/starred/posted issues!
+
 ### Installation
 1. Clone this repo
 2. run npm install
